@@ -2,6 +2,7 @@
 
 userdata/sql_data/*
 userdata/wwwroot/*
+userdata/wwwroot/default/*
 userdata/sql_conf/*
 userdata/sql_dump/*
 userdata/httpd_conf/*.*

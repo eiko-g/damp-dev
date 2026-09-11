@@ -11,7 +11,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_CACHE_READ_ONLY=1
 
 # 安装 PIE
-# COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+ENV DEBIAN_FRONTEND=noninteractive
 
 # 使用 Prod 配置
 # RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -27,6 +28,9 @@ RUN apt-get update \
     libzip-dev \
     zlib1g-dev \
     libonig-dev \
+    libicu-dev \
+    libtool \
+    libmagickwand-dev \
     curl \
     zip \
     unzip \
@@ -39,7 +43,13 @@ RUN apt-get update \
     zip \
     mbstring \
     gd \
-    fileinfo
+    fileinfo \
+    exif \
+    intl
+
+# 用 PIE 装扩展
+RUN pie install xdebug/xdebug \
+    && pie install imagick/imagick
 
 # PHP 的配置
 RUN echo "memory_limit = ${PHP_MEMORY_LIMIT}" >> /usr/local/etc/php/conf.d/docker-php-memory-limit.ini \
@@ -47,7 +57,12 @@ RUN echo "memory_limit = ${PHP_MEMORY_LIMIT}" >> /usr/local/etc/php/conf.d/docke
     && echo "upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}" >> /usr/local/etc/php/conf.d/docker-php-upload-max-filesize.ini \
     && echo "post_max_size = ${PHP_POST_MAX_SIZE}" >> /usr/local/etc/php/conf.d/docker-php-post-max-size.ini \
     && echo "expose_php = off" >>  /usr/local/etc/php/conf.d/docker-php-expose-php.ini \
-    && echo "date.timezone = ${PHP_TIMEZONE}" >>  /usr/local/etc/php/conf.d/docker-php-date-timezone.ini
+    && echo "date.timezone = ${PHP_TIMEZONE}" >>  /usr/local/etc/php/conf.d/docker-php-date-timezone.ini \
+    && echo "xdebug.mode = debug\n" >> /usr/local/etc/php/conf.d/docker-php-xdebug-mode.ini \
+    && echo "xdebug.start_with_request = yes\n" >> /usr/local/etc/php/conf.d/docker-php-xdebug-mode.ini \
+    && echo "xdebug.client_port = 9003\n" >> /usr/local/etc/php/conf.d/docker-php-xdebug-mode.ini \
+    && echo "xdebug.client_host = host.docker.internal\n" >> /usr/local/etc/php/conf.d/docker-php-xdebug-mode.ini \
+    && echo "xdebug.discover_client_host = 1\n" >> /usr/local/etc/php/conf.d/docker-php-xdebug-mode.ini
 
 # Apache 的配置
 RUN a2enmod rewrite headers ssl
@@ -55,19 +70,19 @@ RUN a2enmod rewrite headers ssl
 #     && sed -i 's/ServerSignature On/ServerSignature Off/' /etc/apache2/conf-available/security.conf
 
 # 弄个非 root 用户
-# RUN useradd -r -u 1000 -g www-data webuser
+RUN useradd -r -u 1000 -g www-data webuser
 
 # 配置 PHP 的日志目录跟权限
-# RUN mkdir -p /var/log/php \
-#     && chown -R webuser:www-data /var/log/php \
-#     && chmod 755 /var/log/php
+RUN mkdir -p /var/log/php \
+    && chown -R webuser:www-data /var/log/php \
+    && chmod 755 /var/log/php
 
 # 设置网站目录的权限
-# RUN chown -R webuser:www-data /var/www/html \
-#     && chmod -R 750 /var/www/html
+RUN chown -R webuser:www-data /var/www/html \
+    && chmod -R 750 /var/www/html
 
 # 切换到非 root 用户
-# USER webuser
+USER webuser
 
 # Health check
 # HEALTHCHECK --interval=30s --timeout=3s --retries=3 \

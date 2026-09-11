@@ -13,7 +13,7 @@ docker compose pull
 docker compose build
 ```
 
-HTTP 的默认端口为 `8080/8443`，MariaDB 的为 `33060`，PHPMyAdmin 的为 `8086`。
+HTTP 的默认端口为 `8080/8443`，MariaDB 的为 `33060`，PHPMyAdmin 的为 `8086`，Xdebug 的为 `9003`。
 
 PHP 的默认时区为 `Asia/Shanghai`。
 
@@ -29,6 +29,9 @@ PHP 安装的扩展：
 - mbstring
 - gd
 - fileinfo
+- exif
+- imagick
+- xdebug
 
 进 Docker 系统的 bash：
 
