@@ -28,8 +28,10 @@ RUN apt-get update \
     libzip-dev \
     zlib1g-dev \
     libonig-dev \
+    # libicu 是给 intl 用的
     libicu-dev \
     libtool \
+    # libmagicwand 是给 Imagick 用的
     libmagickwand-dev \
     curl \
     zip \

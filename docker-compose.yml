@@ -5,6 +5,8 @@ services:
     container_name: "damp-mariadb-lts"
     ports:
       - "127.0.0.1:${MARIADB_PORT}:3306"
+    # 设置 UID 和 GID，不然权限出错
+    user: "1000:1000"
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}
