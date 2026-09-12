@@ -30,7 +30,6 @@ RUN apt-get update \
     libonig-dev \
     # libicu 是给 intl 用的
     libicu-dev \
-    libtool \
     # libmagicwand 是给 Imagick 用的
     libmagickwand-dev \
     curl \
