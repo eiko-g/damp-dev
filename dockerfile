@@ -66,7 +66,7 @@ RUN echo "memory_limit = ${PHP_MEMORY_LIMIT}" >> /usr/local/etc/php/conf.d/docke
     && echo "xdebug.discover_client_host = 1\n" >> /usr/local/etc/php/conf.d/docker-php-xdebug-mode.ini
 
 # Apache 的配置
-RUN a2enmod rewrite headers ssl
+RUN a2enmod rewrite headers ssl expires
 # RUN sed -i 's/ServerTokens OS/ServerTokens Prod/' /etc/apache2/conf-available/security.conf \
 #     && sed -i 's/ServerSignature On/ServerSignature Off/' /etc/apache2/conf-available/security.conf
 
